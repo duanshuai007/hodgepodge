@@ -1,0 +1,21 @@
+sudo wpa_supplicant -d -Dwext -iwlp1s0 -c /etc/wpa_supplican/wireless.conf &
+sudo dhclient wlp1s0
+
+开启ssh服务：
+ps -ef | grep ssh
+sudo /etc/init.d/ssh start
+sudo /etc/init.d/ssh resart
+
+配置git
+git config --global http.proxy 'socks5://127.0.0.1:9999'
+git config --global https.proxy 'socks5://127.0.0.1:9999'
+export http_proxy=localhost:8118
+export https_proxy=localhost:8118
+
+取消git代理服务器
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+
+/etc/init.d/network-manager start
+nmcli device wifi connect 'ssid' password 'password'
+

@@ -1,0 +1,19 @@
+linux 回复rm删除的文件
+
+使用debugfs:
+打开文件对应的硬盘符
+open /dev/sda1	
+查看刚刚删除文件所在目录
+ls -d /home/duanshuai/test.file
+显示出来的带有<>标志的就是我们需要的文件Inode号
+执行
+logdump -i <Inode号>
+执行完成后会显示
+Blocks: (0+1):39372
+
+退出debugfs
+执行：
+dd if=/dev/sda1 of=/tmp/test.file.bk bs=4096 count=1 skip=39372
+	  硬盘福必须对	   文件名						上一步获取的Inode号
+
+进入tmp目录查看是否存在文件

@@ -1,0 +1,13 @@
+修改默认的IP地址
+
+
+/etc/network/interface文件中的
+auto lo
+iface lo inet loopback
+下面
+添加
+auto eth0
+iface eth0 inet static
+address 192.168.200.212
+netmask 255.255.255.0
+gateway 192.168.200.253

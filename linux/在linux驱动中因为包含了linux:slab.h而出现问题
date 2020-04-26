@@ -1,0 +1,2 @@
+在linux驱动中因为包含了linux/slab.h而出现问题
+https://stackoverflow.com/questions/14203312/loadable-kernel-module-unknown-symbol-malloc-sizes-err-0

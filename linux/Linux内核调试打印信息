@@ -1,0 +1,35 @@
+Linux内核调试打印信息
+
+下面的代码片断实现了这些特性, 直接来自头文件 scull.h:
+
+#undef PDEBUG /* undef it, just in case */
+#ifdef SCULL_DEBUG
+# ifdef __KERNEL__
+
+/* This one if debugging is on, and kernel space */
+# define PDEBUG(fmt, args...) printk( KERN_DEBUG "scull: " fmt, ## args)
+# else
+
+/* This one for user space */
+# define PDEBUG(fmt, args...) fprintf(stderr, fmt, ## args)
+# endif
+#else
+# define PDEBUG(fmt, args...) /* not debugging: nothing */
+#endif
+
+#undef PDEBUGG #define PDEBUGG(fmt, args...) /* nothing: it's a placeholder */
+符号 PDEBUG 定义和去定义, 取决于 SCULL_DEBUG 是否定义, 和以何种方式显示消息适合代码运行的环境: 当它在内核中就使用内核调用 printk, 在用户空间运行就使用 libc 调用 fprintf 到标准错误输出. PDEBUGG 符号, 换句话说, 什么不作; 他可用来轻易地"注释" print 语句, 而不用完全去掉它们.
+
+为进一步简化过程, 添加下面的行到你的 makfile 里:
+
+# Comment/uncomment the following line to disable/enable debugging
+DEBUG = y
+
+# Add your debugging flag (or not) to CFLAGS
+ifeq ($(DEBUG),y)
+ DEBFLAGS = -O -g -DSCULL_DEBUG # "-O" is needed to expand inlines
+else
+ DEBFLAGS = -O2
+endif
+
+CFLAGS += $(DEBFLAGS) 

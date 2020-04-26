@@ -1,0 +1,26 @@
+git log		查看push的历史记录
+
+回退到历史某个commit上
+git reset --hard [commit no]
+git push -f -u origin master
+
+切换到某个分支
+git checkout [分支名]
+新建分支并跳转到该分支上
+git checkout -b  [分支名]
+合并分支到当前分支，一般当前分支为master，将新建的分支合并到master分支上
+git merge [分支名]
+删除对应的分支
+git branch -d [分支名]
+
+单片机的串口波特率
+./gg /dev/tty.SLAB_USBtoUART 16 57600 8 "O" 1
+lora模块的串口波特率
+./gg /dev/tty.SLAB_USBtoUART15 13 115200 8 "N" 1
+
+
+
+python python_serial.py /dev/tty.SLAB_USBtoUART 115200 8 'N' 1 13
+
+
+

@@ -1,0 +1,63 @@
+ubuntu opencv 安装
+
+sudo apt-get install build-essential cmake pkg-config 
+sudo apt-get install libjpeg8-dev libtiff5-dev 
+
+sudo apt-get install software-properties-common     //安装后能够使用add-apt-repository工具
+sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu xenial-security main" //添加libjasper源
+sudo apt update
+sudo apt-get install libjasper-dev libpng12-dev 
+
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt-get install libxvidcore-dev libx264-dev
+sudo apt-get install libatlas-base-dev gfortran 
+sudo apt-get install python2.7-dev python3.5-dev 
+
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+sudo apt-get install python-numpy
+
+
+sudo apt-get install libv4l-dev
+cd /usr/include/linux
+sudo ln -s ../libv4l1-videodev.h videodev.h
+
+
+sudo apt-get install ffmpeg
+
+
+sudo wget -O opencv.zip https://github.com/Itseez/opencv/archive/3.0.0.zip
+unzip opencv.zip
+
+wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/3.1.0.zip
+unzip opencv_contrib.zip
+
+在opencv目录下执行
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_PYTHON_EXAMPLES=ON -D INSTALL_C_EXAMPLES=OFF -D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib-3.1.0/modules -D BUILD_EXAMPLES=ON .
+sudo make 
+sudo make install 
+sudo ldconfig
+
+错误：找不到-lippicv
+解决：
+cd opencv/build/3rdparty/ippicv/ippicv_lnx/lib/intel64
+sudo cp libippicv.a /usr/local/lib/
+
+缺少的一些库安装时用到的指令：
+sudo apt-get install libgphoto2-dev
+sudo apt-get install libavresample-dev
+sudo apt-get install libgstreamer-plugins-base1.0-dev
+安装完成后需要make clean才能使这些库确保生效。
+
+
+lopencv_superres
+
+
+sudo cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_PYTHON_EXAMPLES=ON -D INSTALL_C_EXAMPLES=OFF -D BUILD_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib-3.0.0-beta/modules .
+
+
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_PYTHON_EXAMPLES=ON -D INSTALL_C_EXAMPLES=OFF -D BUILD_EXAMPLES=ON .

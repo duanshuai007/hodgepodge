@@ -1,0 +1,43 @@
+
+
+检查是否已经安装了中文包支持
+sudo dpkg -l | grep language-pack-zh-hans
+
+
+安装
+如果没有安装，就安装，已经安装了就直接跳到下一步，原来的language-pack-zh已经更新为language-pack-zh-hans，所以这一步改了一下
+sudo apt-get install language-pack-zh-hans
+
+
+配置语言环境变量
+1.打开/etc/environment
+sudo vim /etc/environment
+把下面代码添加进environment文件
+LANG="zh_CN.UTF-8"
+LANGUAGE="zh_CN:zh:en_US:en"
+
+
+2.打开/var/lib/locales/supported.d/local，文件不存在就创建文件
+sudo vim /var/lib/locales/supported.d/local
+添加zh_CN.GB2312字符集
+en_US.UTF-8 UTF-8
+zh_CN.UTF-8 UTF-8
+zh_CN.GBK GBK
+zh_CN GB2312
+
+
+3.保存文件，执行以下命令
+sudo locale-gen
+
+
+设置系统默认语言
+打开/etc/default/locale
+sudo vim /etc/default/locale
+
+
+修改为：
+LANG="zh_CN.UTF-8"
+LANGUAGE="zh_CN:zh:en_US:en" 
+sudo reboot
+
+然后重新开启终端就搞定了

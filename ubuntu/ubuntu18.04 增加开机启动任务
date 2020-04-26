@@ -1,0 +1,22 @@
+ubuntu18.04 增加开机启动任务
+
+1.
+vi /lib/systemd/system/rc.local.service
+在文件末尾添加 
+[Install]
+WantedBy=multi-user.target
+Alias=rc-local.service
+
+2.
+ln -s /lib/systemd/system/rc.local.service /etc/systemd/system/rc.local.service
+
+3.
+vi /etc/rc.local
+
+#!/bin/bash
+echo "hello" > /etc/test.log
+exit 0
+
+4.
+chmod +x /etc/rc.local
+

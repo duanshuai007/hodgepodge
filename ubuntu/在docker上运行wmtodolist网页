@@ -1,0 +1,97 @@
+在docker上运行wmtodolist网页
+
+安装laravel
+https://websiteforstudents.com/install-laravel-php-framework-on-ubuntu-16-04-17-10-18-04-with-apache2-and-php-7-2-support/
+
+
+
+
+git clone http://gitlab.frogshealth.com/wmtodolist/wmtodolist.git 
+
+cd wmtodolist
+unzip vendor_08_14.zip
+
+sudo chown -R www-data:www-data /var/www/html/wmtodolist/
+sudo chmod -R 755 /var/www/html/wmtodolist/
+
+cp .env_example .env
+
+修改.env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_DATABASE=wmtodolist
+DB_USERNAME=todo
+DB_PASSWORD=kbevHotqr6VtA
+
+CAS_HOSTNAME=gitlab.weixinxk.net:8091
+CAS_LOGOUT_URL=http://gitlab.weixinxk.net:8091/cas/logout
+CAS_LOGOUT_REDIRECT=http://example.com:90
+CAS_REDIRECT_PATH=http://192.168.200.34:9080/sample/
+CAS_ENABLE_SAML=true
+
+最后运行
+php artisan key:generate
+php artisan queue:work --daemon &
+
+创建数据库:CREATE DATABASE wmtodolist CHARACTER SET utf8mb4;
+添加用户和密码:CREATE USER 'todo'@'localhost' IDENTIFIED BY 'kbevHotqr6VtA';
+GRANT ALL PRIVILEGES ON wmtodolist.* TO 'todo'@'localhost';
+倒入数据库文件
+mysql -u todo -p wmtodolist < database3.sql
+
+修改点击cas按钮后跳转地址是https的问题，这时因为服务器端还没配置https所以需要修改代码使跳转地址是http。
+修改代码vendor/jasig/phpcas/source/CAS/Client.php 的 _getServerBaseURL函数
+$this->_server['base_url'] = 'https://' . $this->_getServerHostname();
+中的https修改为http。
+
+
+在一开始cas按钮点击一次就会出现一次需要验证，一次不需要验证的现象。查看log发现是
+能自动登陆: http://gitlab.weixinxk.net:8091/cas/login?service=http%3A%2F%2F192.168.200.34%3A9080%2Fsample%2F&gateway=true 
+不能自动登陆: http://gitlab.weixinxk.net:8091/cas/login?service=http%3A%2F%2F192.168.200.34%3A9080%2Fsample%2F
+区别就在于gateway上，搜索代码，在vendor/jasig/phpcas/source/CAS/Client.php 中发现forceAuthentication函数内调用redirectToCas时gateway参数是false，将其修改为true后就每一次都能够跳转了。
+或者！
+修改vendor/jasig/phpcas/source/CAS/Client.php的1379行：
+//$_SESSION['phpCAS']['auth_checked'] = true;
+
+
+测试用的主页,获取cas server发送过来的属性
+sudo vi resources/views/test.blade.php 
+
+
+http://mytodo.com:90/register?email=eyJpdiI6IlJuZEp1Vyt3YkVMKzVaM1FaWXNmYmc9PSIsInZhbHVlIjoib3o4T0pBSXVlcitPejFOZWF2OGlGSVwvbWtob1ZtN2RtVWcwcHJrMjI2OUtsWnZwckMwZ3UwMFJYTUVKRVZWR3AiLCJtYWMiOiIxNzZiZTlhMzEyZDNlZTU4ZTEyNjAyN2FmNTNkYWRmNDMyYTJlMjUyNzMzNTZjOGMyODJmMDk5M2M2NWVkNjQ1In0=&code=ce8510
+
+
+
+
+ laravel多个站点默认使用同一个session，通过修改config/session.php文件中的'cookie' => 'laravel_session' 修改为 'cookie' => 'laravel_wmtodo_session' 需要区别session的项目都修改为互不相同的名称。
+ apache2配置多站点：修改/etc/apache2/sites-available/laravel.conf文件，新增站点配置后,sudo service apache2 restart 即可。可以通过 apachectl -t来检查配置文件是否写的正确。
+ 配置文件的内容：
+ <VirtualHost *:90>   
+  ServerAdmin admin@mytodo.com
+     DocumentRoot /var/www/html/wmtodolist/public
+     ServerName mytodo.com
+
+     <Directory /var/www/html/wmtodolist/public>
+        Options +FollowSymlinks
+        AllowOverride All 
+        Require all granted
+     </Directory>
+
+     ErrorLog ${APACHE_LOG_DIR}/error.log
+     CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+<VirtualHost *:90>
+  ServerAdmin admin@mytodoplus.com
+     DocumentRoot /var/www/html/testtodolist/public
+     ServerName mytodoplus.com
+
+     <Directory /var/www/html/testtodolist/public>
+        Options +FollowSymlinks
+        AllowOverride All 
+        Require all granted
+     </Directory>
+
+     ErrorLog ${APACHE_LOG_DIR}/error.log
+     CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

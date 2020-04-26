@@ -1,0 +1,6 @@
+设置ubuntu 自动登录的方法
+
+/etc/gdm3/custom.conf
+# Enabling automatic login
+   AutomaticLoginEnable = true
+   AutomaticLogin = duan

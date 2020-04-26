@@ -1,0 +1,41 @@
+学习linux驱动的网址
+http://www.deansys.com/doc/ldd3/index.html
+
+linux gpio pinctrl
+http://www.wowotech.net/gpio_subsystem/io-port-control.html
+
+喔喔科技
+http://www.wowotech.net/sort/device_model
+
+DeviceTree
+1.http://www.wowotech.net/device_model/why-dt.html
+2.http://www.wowotech.net/device_model/dt_basic_concept.html
+3.http://www.wowotech.net/device_model/dt-code-analysis.html
+4.http://www.wowotech.net/device_model/dt-code-file-struct-parse.html
+移植devicetree
+http://www.wowotech.net/x_project/bubblegum_uboot_device_tree.html
+https://blog.csdn.net/pwl999/article/details/79631434
+移植pinctrl
+http://www.wowotech.net/x_project/kernel_pinctrl_driver_porting.html
+
+Pinctrl详细解读
+http://www.wowotech.net/sort/gpio_subsystem
+
+
+USB gadget
+
+2)https://blog.csdn.net/MENGHUANBEIKE/article/details/86035160
+
+4)https://blog.csdn.net/farsight2009/article/details/4561815
+
+
+
+s3c2440 uboot
+1)https://gaomf.cn/2016/06/19/U-Boot%202016.05%20在S3C2440上的移植（1）——基本运行/
+2)https://gaomf.cn/2016/06/24/U-Boot%202016.05%20在S3C2440上的移植（2）——Nor%20Flash/
+3)https://gaomf.cn/2016/06/25/U-Boot%202016.05%20在S3C2440上的移植（3）——Nand%20Flash/
+4)https://gaomf.cn/2016/06/25/U-Boot%202016.05%20在S3C2440上的移植（4）——DM9000网卡/
+5)https://gaomf.cn/2016/06/26/U-Boot%202016.05%20在S3C2440上的移植——杂项/
+
+怎么看懂nandflash的读写时序图
+https://blog.csdn.net/lee244868149/article/details/49384013

@@ -1,0 +1,99 @@
+A64 魔镜和电话机修改记录文档
+
+1、lichee/tools/pack/chips/sun50iw1p1/configs/bpi-m64-lcd/sys_config.fex 修改gpio配置到电话
+2、android/vendor/google --- rm
+3、android/build/target/product/core.mk 删除若干应用
+4、android/build/target/product/generic_no_telephony.mk 删除若干应用
+5、android/device/softwinner/common/prebuild/preinstallapk 删除若干应用
+5.1 device/softwinner/bpi-m64-lcd/bpi_m64_lcd.mk
+build/target/product/sdk_base.mk
+build/target/product/full_base.mk
+5.2 android/frameworks/base/packages/
+6、android/device/softwinner/bpi-m64-lcd/bpi_m64_lcd.mk ro.sf.rotation=90 对应/system/build.prop add ro.sf.rotation=90
+7、lichee/tools/pack/chips/sun50iw1p1/configs/bpi-m64-lcd/bootlogo.bmp 开机图片
+8、android/device/softwinner/bpi-m64-lcd/media/bootanimation.zip    /system/media/bootanimation.zip 开机动画
+9、device/softwinner/bpi-m64-lcd/overlay/frameworks/base/core/res/res/drawable-sw600dp-nodpi/default_wallpaper.jpg 桌面背景(framework-res.apk)
+10、frameworks/base/core/res/res/values/dimens.xml 有statusbar以及NavigationBar的height定义
+
+
+adb shell settings put global captive_portal_server g.cn
+adb shell settings get global captive_portal_server
+
+制作启动动画的指令
+sourdir/part0
+在sourdir目录下执行
+sourdit目录下有文件desc.txt
+800 480 20
+p 1 0 part0
+part0目录下是图片
+zip -0qry -i \*.txt \*.png \*.wav @ ../bootanimation.zip *.txt part*
+
+部分编译方法:
+frameworks/base/core/res/ mm --- framework-res.apk
+frameworks/base/ mm --- framework.jar
+frameworks/base/services/java/ mm --- services.jar
+
+
+无源码情况下隐藏状态栏
+https://stackoverflow.com/questions/21371802/permanently-hide-android-status-bar
+https://forum.xda-developers.com/g5/how-to/guide-hide-status-bar-nav-bar-adb-t3654807
+
+
+device/softwinner/bpi-m64-lcd/overlay/frameworks/base/packages/SettingsProvider/res/values/defaults.xml 
+status.eqoe.cn 修改为g.cn
+
+wifi不自动连接，出现错误提示“no internet access detected won't automatically reconnect”
+解决：因为android连接网络过程是先通过wifi向一个服务器发送一个请求，该服务器会返回一个204，android接受到该204信息后认为该wifi能够连接网络，才会自动连接。这里不自动连接到原因就是该服务器的服务出现问题，换一个服务器试试，测试"g.cn"发现能够自动连接了。
+
+
+在/system/build.prop最后一行添加内容，修改脚本文件
+android/build/tools/buildinfo.sh 
+在倒数第二行加
+echo "service.adb.tcp.port=5555"
+
+
+修改device/softwinner/common/prebuild/preinstallapk/Pinyin/Android.mk
+文件的
+LOCAL_MODULE_PATH := $(TARGET_OUT)/preinstall
+为
+LOCAL_MODULE_PATH := $(TARGET_OUT)/app
+这样就将Pinyin.apk安装到了系统的/system/app目录下了，输入法作为系统应用就不需要设置就直接使用了。
+
+adb shell settings get global captive_portal_server
+
+
+
+
+
+
+com.google.android.inputmethod.pinyin
+com.google.android.inputmethod.pinyin.PinyinIME
+
+def_captive_portal_server
+
+frameworks/base/packages/SettingsProvider/res/values/defaults.xml 
+
+frameworks/base/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java 
+新加：
+2472 
+2473 loadStringSetting(stmt, Settings.Secure.DEFAULT_INPUT_METHOD, R.strin     g.config_default_input_method);
+2474 
+2475 loadStringSetting(stmt, Settings.Secure.ENABLED_INPUT_METHODS,R.strin     g.config_enabled_input_method);
+
+How to allow google pinyin input ao access your contacts?
+How to change keyboard hardware show input method to on?
+
+ 238  android:windowSoftInputMode="adjustNothing">
+
+<string name="config_default_input_method" translatable="false">com.sohu.inputmethod.sogou/.SogouIME</string>
+<string name="config_enabled_input_method" translatable="false">com.sohu.inputmethod.sogou/.SogouIME:com.android.inputmethod.latin/.LatinIME</string>
+
+
+development/apps/Development/AndroidManifest.xml 
+ 82                   android:windowSoftInputMode="stateHidden">
+ 修改为
+ 82                   android:windowSoftInputMode="stateVisible">
+
+默认显示虚拟键盘: 
+device/softwinner/bpi-m64-lcd/overlay/frameworks/base/packages/SettingsProvider/res/values/defaults.xml
+

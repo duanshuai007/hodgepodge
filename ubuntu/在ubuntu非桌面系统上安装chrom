@@ -1,0 +1,154 @@
+在ubuntu非桌面系统上安装chrom，并设置开机自动启动chrome并打开响应的网页
+
+ubuntu 安装x11 
+sudo apt-get install xorg
+
+安装chrome
+sudo apt-get install chromium-browser
+
+安装openbox
+sudo apt-get install openbox
+
+export DISPLAY=:0.0
+
+删除用户根目录下的.XAuth****文件
+
+startx /usr/bin/chromium-browser localhost
+
+设置localhost:8080为默认主页
+vim ~/.profile
+[[ ! $DISPLAY && $XDG_VTNR -eq 1 && $(id --group) -ne 0 ]] && exec startx /usr/bin/chromium-browser --noerrdialogs --kiosk --window-size=2560,1440 localhost:8080
+
+
+ifconfig 出现来的名字不是eth0 wlan0
+修改/etc/default/grub
+如下
+GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"
+
+修改完成后执行
+sudo grub-mkconfig -o /boot/grub/grub.cfg 
+然后reboot
+
+修改默认的ip
+在
+/etc/network/interface文件中的
+auto lo
+iface lo inet loopback
+下面
+添加
+auto eth0
+iface eth0 inet static
+address 192.168.200.212
+netmask 255.255.255.0
+gateway 192.168.200.253
+
+
+设置ubuntu自动登录
+/etc/gdm3/custom.conf
+# Enabling automatic login
+   AutomaticLoginEnable = true
+   AutomaticLogin = duan
+
+设置不需要密码进入系统：
+创建文件夹 /etc/systemd/system/getty@tty1.service.d
+创建文件 /etc/systemd/system/getty@tty1.service.d/override.conf
+使用你喜爱的编辑器打开该文件并添加：
+复制代码
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --noissue --autologin myusername %I $TERM
+Type=idle
+用你的用户名替换 myusername。
+
+设置在GRUB界面不等待
+sudo vim /etc/default/grub
+GRUB_TIMEOUT=0
+sudo update-grub
+
+隐藏光标
+sudo apt-get install unclutter 
+unclutter -display :0.0 -idle 0.1 -root
+
+隐藏光标的方法一：
+添加开机启动脚本rc.local在/etc/目录下，设置为可运行。
+添加内容
+#!/bin/sh
+su pfrog -l -c /home/pfrog/set_mouse.sh &	#以用户pfrog来运行，如果不这么写就会用root来运行，会出错。
+
+编写脚本set_mouse.sh内容
+#!/bin/sh
+FILE=/home/pfrog/1.txt
+echo "script start" > $FILE
+while true
+do
+	ps -ef | grep chromium | grep -v grep > /dev/null
+	if [ $? -eq 0 ]
+	then
+		echo "chrom runrunrun" >> $FILE
+		echo "start unclutter" >> $FILE
+		sleep 1
+		unclutter -display :0.0 -idle 0.1 -root >> $FILE 2>&1 &
+		echo "end unclutter" >> $FILE
+		ps -ef | grep unclutter | grep -v grep > /dev/null
+		if [ $? -eq 0 ]
+		then
+			echo "unclutter running" >> $FILE
+			break
+		fi
+	fi
+	sleep 1
+	echo "chrom not run" >> $FILE
+done
+echo "script end" >> $FILE
+设置为可执行
+在～/.profile中添加
+[[ ! $DISPLAY && $XDG_VTNR -eq 1 && $(id --group) -ne 0 ]] && exec startx /usr/bin/chromium-browser --noerrdialogs --window-size=2060,1040 localhost:8080
+
+
+
+隐藏光标的方法二：
+修改~/.profile内容
+[[ ! $DISPLAY && $XDG_VTNR -eq 1 && $(id --group) -ne 0 ]] && exec sudo Xorg :0 &
+sleep 1
+[[ ! $DISPLAY && $XDG_VTNR -eq 1 && $(id --group) -ne 0 ]] && unclutter -display :0.0 -idle 0.1 > 1.txt 2>&1 &
+[[ ! $DISPLAY && $XDG_VTNR -eq 1 && $(id --group) -ne 0 ]] && exec /usr/bin/chromium-browser --display=:0.0 --noerrdialogs --window-size=2060,10
+40 localhost:8080 > 2.txt 2>&1
+
+更改用户权限，无需sudo密码 /etc/sudoers
+pfrog ALL=(ALL) NOPASSWD: ALL
+
+
+
+
+
+
+#设置开机启动脚本
+echo "************* Setting autorun Script ******************"
+SCRIPT_NAME=myscript
+SCRIPT=/etc/init.d/${SCRIPT_NAME}
+touch ${SCRIPT} 
+chmod +x ${SCRIPT}
+echo "#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          bbzhh.com
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: tomcat service
+# Description:       tomcat service daemon
+### END INIT INFO
+" > ${SCRIPT}
+#在这里添加具体的想要执行的程序
+echo "
+sh ${RootWifiDir}/watch_wifi.sh &
+sh ${RootUpgradeDir}/watch_upgrade.sh &
+exit 0
+" >> ${SCRIPT}
+
+update-rc.d ${SCRIPT_NAME} defaults 90
+
+
+
+
+

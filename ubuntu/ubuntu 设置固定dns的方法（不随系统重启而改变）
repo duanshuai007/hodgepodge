@@ -1,0 +1,11 @@
+ubuntu 设置固定dns的方法（不随系统重启而改变）
+
+/etc/resolv.conf 里面dns总是自己改变的问题解决：
+(1) 创建 /etc/resolvconf/resolv.conf.d/tail文件 (etc/resolvconf/resolv.conf.d 文件夹下已有了 head和base文件)
+(2) 在该文件中写入自己需要的dns服务器 （后面会补充Windows下查看DNS服务器的方法）
+nameserver 114.114.114.114
+(3) 重启 resolvconf程序
+sudo /etc/init.d/resolvconf restart　　　　(我试了一下在，没有效果，又重启的虚拟机，有效了)
+
+或者修改/etc/systemd/resolved.conf文件
+将DNS项修改为DNS=114.114.114.114

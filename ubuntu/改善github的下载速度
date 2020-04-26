@@ -1,0 +1,36 @@
+改善github的下载速度
+
+GitHub在中国大陆访问速度慢的问题原因有很多，但最直接和最主要的原因是GitHub的分发加速网络的域名遭到DNS污染。
+
+由于GitHub的加速分发CDN域名assets-cdn.github.com遭到DNS污染，导致无法连接使用GitHub的加速分发服务器，才使得中国大陆访问速度很慢。
+
+解决
+通过修改Hosts解决污染问题
+一般的DNS问题都可以通过修改Hosts文件来解决，GitHub的CDN域名被污染问题也不例外，同样可以通过修改Hosts文件解决。
+
+将域名解析直接指向IP地址来绕过DNS的解析，以此解决污染问题。
+
+如何修改Hosts
+
+获取被污染域名的实际IP地址
+
+访问 IPAddress.com 使用 IP Lookup 工具获得这个域名的IP地址。
+得到的结果如下：
+1
+2
+192.30.253.112      github.com
+151.101.185.194     github.global.ssl.fastly.net
+修改的Hosts文件
+将上述结果添加到系统 hosts 文件或者 git 的hosts 中的一个即可。
+
+Windows 路径 C:\Windows\System32\drivers\etc
+C:\Program Files\Git\etc
+
+Linux 路径 /etc/hosts
+
+测试下载速度对比
+修改前: 10 KB/s
+sudu1
+
+修改后: 1.12 MB/s
+

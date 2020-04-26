@@ -1,0 +1,8 @@
+制作ubuntu安装u盘
+1、格式转换
+hdiutil convert -format UDRW -o ubuntu.iso ubuntu-xxxxxx.iso
+mv ubuntu.iso.dmg ubuntu.iso
+2、umount u盘
+diskutil unmountDisk /dev/diskN
+3、制作
+sudo dd if=./ubuntu.iso of=/dev/rdiskN bs=1m

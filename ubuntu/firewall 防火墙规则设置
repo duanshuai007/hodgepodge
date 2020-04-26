@@ -1,0 +1,26 @@
+firewall 防火墙规则设置
+
+添加一个端口规则
+sudo firewall-cmd --zone=public --add-port=2049/tcp --permanent
+
+删除一个端口规则
+sudo firewall-cmd --zone=public --remove-port=2049/tcp --permanent
+
+网络数据抓包
+sudo tcpdump -i eth0 dst host 192.168.200.10
+
+查看所有规则
+sudo firewall-cmd --list-all
+
+重载所有规则
+sudo firewall-cmd --reload
+
+查看服务状态
+systemctl status firewalld
+systemctl start firewalld
+systemctl stop firewalld
+
+查看nfs状态
+netstat | grep nfs
+
+

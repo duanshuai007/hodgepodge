@@ -1,0 +1,53 @@
+hisi3516a 自动获取IP
+
+使用udhcpc进行自动化配置IP。该指令直接执行udhcpc -i eth0 能够获得ip但是不会配置到主板上，想要配置到主板上，需要在/usr/share/udhcpc目录下添加一个新文件
+default.script
+
+该文件内容为
+#!/bin/sh
+
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+[ -z "$1" ] && echo "Error: should be called from udhcpc" && exit 1
+
+RESOLV_CONF="/etc/resolv.conf"
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+case "$1" in
+    deconfig)
+        /sbin/ifconfig $interface 0.0.0.0
+        ;;  
+
+    renew|bound)
+        /sbin/ifconfig $interface $ip $BROADCAST $NETMASK
+        if [ -n "$router" ] ; then
+            echo "Deleting routers"
+            while route del default gw 0.0.0.0 dev $interface 2>/dev/null
+            do
+                :   
+            done
+
+            for i in $router ; do
+                route add default gw $i dev $interface
+            done
+        fi  
+
+        echo -n > $RESOLV_CONF
+        [ -n "$domain" ] && echo search $domain >> $RESOLV_CONF
+        for i in $dns ; do
+            echo adding dns $i
+            echo nameserver $i >> $RESOLV_CONF
+        done
+        ;;  
+esac
+
+exit
+
+设置文件可执行权限
+然后需要在/etc/init.d/rcS中原来ifconfig的地方将原来的ifconfig语句注释掉，
+加上新的命令
+udhcpc -i eth0
+保存退出，
+
+然后reboot

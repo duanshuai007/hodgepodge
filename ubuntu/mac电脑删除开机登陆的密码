@@ -1,0 +1,10 @@
+mac电脑删除开机登陆的密码
+
+开机后按住command+s，会出现中断，
+输入fsck -y
+输入mount -uaw /
+输入rm /var/db/.AppleSetupDone
+reboot重新登录
+最难搞定的一步搞定了剩下的就好办了。
+
+

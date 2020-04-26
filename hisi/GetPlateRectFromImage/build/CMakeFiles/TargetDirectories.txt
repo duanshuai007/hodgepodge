@@ -1,0 +1,3 @@
+/home/duan/GetPlateRectFromImage/build/CMakeFiles/rebuild_cache.dir
+/home/duan/GetPlateRectFromImage/build/CMakeFiles/TEST_Detection.dir
+/home/duan/GetPlateRectFromImage/build/CMakeFiles/edit_cache.dir

@@ -1,0 +1,7 @@
+ubuntu使printk消息能够输出
+
+  1.cat /var/log/syslog查看打印信息；
+
+  2.终端输入命令dmesg（-c 清除）命令，能打印信息；
+
+  3.终端输入命令cat /proc/kmsg &，这时候能动态显示调试信息。

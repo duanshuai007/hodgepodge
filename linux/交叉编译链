@@ -1,0 +1,18 @@
+交叉编译链
+
+获取交叉编译链的方式有两种：
+1.从linaro网站直接获取高版本linux的交叉编译链，适用于linux3.x以上(具体是多少没有测试过)
+	https://releases.linaro.org/components/toolchain/binaries/
+
+2.自己制作交叉编译链
+	一般建议使用crosstool-ng工具来制作交叉编译链，在crosstool-ng 1.22版本能支持到linux-2.6.32
+	
+编译时，可用内存至少2G,虚拟内存1G，如果你的内存足够大，虚拟内存可以不用。
+
+https://src.fedoraproject.org/repo/pkgs/strace/
+
+https://mirrors.edge.kernel.org/pub/
+https://mirrors.edge.kernel.org/pub/linux/kernel/v3.x/
+
+
+

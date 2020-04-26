@@ -1,0 +1,13 @@
+iptbles
+
+iptables -D chain rulenum
+删除链chain内的第几条规则
+
+查看链内的规则编号
+iptables -L INPUT --line-numbers
+
+向INPUT链内添加一条新规则
+sudo iptables -A INPUT -s 192.168.200.199 -j DROP
+
+也可以用-D来直接删除对应的规则
+sudo iptables -D INPUT -s 192.168.200.199 -j DROP

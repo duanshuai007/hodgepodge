@@ -1,0 +1,35 @@
+ntp 服务器设置
+
+# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
+driftfile /var/lib/ntp/ntp.drift #草稿文件
+
+#日志文件
+statsdir /var/log/ntpstats/
+
+statistics loopstats peerstats clockstats
+filegen loopstats file loopstats type day enable
+filegen peerstats file peerstats type day enable
+filegen clockstats file clockstats type day enable
+
+#上层ntp server
+server 120.24.166.46 prefer 
+#让NTP Server和其自身保持同步，如果在/etc/ntp.conf中定义的server都不可用时，将使用local时间作为ntp服务提供给ntp客户端
+server 127.127.1.0
+
+server ntp.ubuntu.com
+
+#fudge 127.127.1.0 stratum 5
+
+#不允许来自公网上ipv4和ipv6客户端的访问
+restrict -4 default kod notrap nomodify nopeer noquery 
+restrict -6 default kod notrap nomodify nopeer noquery
+
+#运行上层ntp server的所有权限
+#restrict 10.138.16.251
+
+#允许这个网段的对时请求
+restrict 192.168.200.0 mask 255.255.255.0 nomodify 
+
+# Local users may interrogate the ntp server more closely.
+restrict 127.0.0.1
+restrict ::1 

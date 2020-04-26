@@ -1,0 +1,29 @@
+mac 虚拟机：mac系统更新后虚拟机黑屏
+
+Rootless机制将成为对抗恶意程序的最后防线
+Rootless机制将成为对抗恶意程序的最后防线
+Rootless机制将成为对抗恶意程序的最后防线
+
+关闭Rootless机制
+进入恢复模式(重启系统时按住command+R进入恢复模式)下打开终端;
+关闭系统SIP保护：csrutil disable;
+重启，进入正常系统;
+
+
+解决无法添加VMware辅助功能的问题
+进入系统后打开终端;
+依次输入以下命令：
+sudo chmod 777 /Library/Application\ Support/com.apple.TCC
+sudo rm -rf /Library/Application\ Support/com.apple.TCC/TCC.db
+重启系统
+
+
+tccutil reset All com.vmware.fusion
+sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" 'insert into access values ("kTCCServiceScreenCapture", "com.vmware.fusion", 0, 1, 1, "", "", "", "UNUSED", "", 0,1565595574)'
+sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" 'insert into access values ("kTCCServiceListenEvent", "com.vmware.fusion", 0, 1, 1, "", "", "", "UNUSED", "", 0,1565595574)'
+sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" 'insert into access values ("kTCCServicePostEvent", "com.vmware.fusion", 0, 1, 1, "", "", "", "UNUSED", "", 0,1565595574)'
+重新启动VMware fusion，发现已经解决黑屏。
+重新打开Rootless机制
+进入恢复模式(重启系统时按住command+R进入恢复模式)下打开终端;
+关闭系统SIP保护：csrutil enable;
+重启，进入正常系统;

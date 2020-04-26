@@ -1,0 +1,52 @@
+android 系统出现"Key Chain has stopped"错误，通过修改源码的解决方法
+
+思路：不安装该App系统没有问题，系统运行后安装并运行app也没问题，只有当安装app后，系统重启就会几率性出现以上的错误信息。
+
+参考文章：http://www.ishenping.com/ArtInfo/1041131.html
+
+1、如果apk中的native库中含有arm64-v8a，则以64位的模式执行，fork zygote64
+2、如果没有，则看有没有armeabi-v7a,armeabi这两个，如果有，则以32位模式执行，fork zygote
+3、如果以上两个都没有，就查找共享shareuid 运行的情况。如果共享uid 运行32位就运行在32位，共享uid 运行64位就运行在64位，与共享uid运行在同一个虚拟机中。
+4、如果apk中这三个库都没有，则默认以64位模式执行。
+
+
+如果apk包中lib文件夹下有.so库，就根据这个.so库的架构模式，确定app的primaryCpuAbi的值
+对于system app, 如果没法通过第一步确定primaryCpuAbi的值，PKMS会根据/system/app/${APP_NAME}/lib和/system/app/${APP_NAME}/lib64这两个文件夹是否存在，来确定它的primaryCpuAbi的值
+对于还没有确定的app, 在最后还会将自己的primaryCpuAbi值与和他使用相同UID的package的值设成一样
+对于到这里还没有确认primaryCpuAbi的app，就会在启动进程时使用ro.product.cpu.abilist这个property的值的第一项作为它关联的ABI
+
+
+文章中重点是app在系统第一次启动加载的时候回确认调用64位so或32位so，如果没有so则根据/system/app/appname/lib 或 lib64来确认是什么架构。
+
+文件名: frameworks/base/services/core/java/com/android/server/pm/PackageManagerService.java
+修改的方法：
+
+在函数adjustCpuAbisForSharedUserLPw中，
+	{
+		...
+		PackageSetting requirer = null; 
+        for (PackageSetting ps : packagesForUser) {
+            // If packagesForUser contains scannedPackage, we skip it. This will happen
+            // when scannedPackage is an update of an existing package. Without this check,
+            // we will never be able to change the ABI of any package belonging to a shared
+            // user, even if it's compatible with other packages.
+            if (scannedPackage == null || !scannedPackage.packageName.equals(ps.name)) {
+                if (ps.primaryCpuAbiString == null) {
+                    //Slog.i(TAG, "===> duanshuai: ps.primaryCpuAbiString is null");
+                    continue;
+                }     
+                String appname = "com.frogshealth.wephone";
+                if (appname.equals(ps.name)) {
+                    Slog.i(TAG, "===> duanshuai: wephone ignore");
+                    continue;
+                }
+                
+                final String instructionSet = VMRuntime.getInstructionSet(ps.primaryCpuAbiString);
+                if (requiredInstructionSet != null && !instructionSet.equals(requiredInstructionSet)) {
+                    // We have a mismatch between instruction sets (say arm vs arm64) warn about
+                    // this but there's not much we can do.
+    	...
+	}
+
+当检测到wephone时，直接跳过。
+这样系统就会使用arm64-v8a来初始化app，
