@@ -1,1 +1,0 @@
-cmd_/home/duan/work/myDriver/led/led.ko := arm-linux-ld -EL -r  -T /home/duan/work/linux-2.6.32.2/scripts/module-common.lds --build-id -o /home/duan/work/myDriver/led/led.ko /home/duan/work/myDriver/led/led.o /home/duan/work/myDriver/led/led.mod.o

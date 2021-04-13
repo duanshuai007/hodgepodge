@@ -29,7 +29,3 @@ sudo apt-get autoremove opencv-doc opencv-data libopencv-dev libopencv2.4-java l
 $> sudo find / -name "*opencv*" -exec rm -i {} \;
 这条运行时需要手动确认查找到的每条结果是否进行删除，请千万看清楚再删。
 
-
-
- 
-
